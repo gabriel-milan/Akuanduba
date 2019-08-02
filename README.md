@@ -1,4 +1,7 @@
-# ![img](https://raw.githubusercontent.com/gabriel-milan/Akuanduba/master/img/Akuanduba.jpg) Akuanduba
+# Akuanduba
+
+![img](https://raw.githubusercontent.com/gabriel-milan/Akuanduba/master/img/Akuanduba.jpg)
+Image source: [link](https://my-bestiario.fandom.com/pt-br/wiki/Akuanduba)
 
 Akuanduba is a Python framework that eases manipulation of multiple running threads and shared resources. Its name was inspired by a god of the Brazilian mythology: Akuanduba, the god of order.
 
