@@ -1,7 +1,7 @@
 # Akuanduba
 
 <p align="center">
-  <img width="460" height="300" src="https://raw.githubusercontent.com/gabriel-milan/Akuanduba/master/img/Akuanduba.jpg">
+  <img src="https://raw.githubusercontent.com/gabriel-milan/Akuanduba/master/img/Akuanduba.jpg">
 </p>
 
 Image source: [link](https://my-bestiario.fandom.com/pt-br/wiki/Akuanduba)
