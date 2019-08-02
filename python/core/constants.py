@@ -6,7 +6,7 @@ Day = 24 * Hour
 Week = 7 * Day
 Year = 365.25 * Day
 
-# Algorithm constants
+# CoreClasses constants
 MAX_FIFO = 100000
 
 # StoreGateSvc constants

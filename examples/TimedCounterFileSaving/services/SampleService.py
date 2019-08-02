@@ -1,7 +1,7 @@
 __all__ = ['SampleService']
 
 # Mandatory imports
-from Akuanduba.core import Logger, NotSet, AlgorithmSvc
+from Akuanduba.core import Logger, NotSet, AkuandubaService
 from Akuanduba.core.messenger.macros import *
 from Akuanduba.core.constants import *
 from Akuanduba.core import StatusCode, StatusTool, StatusThread
@@ -9,9 +9,9 @@ from Akuanduba.core import StatusCode, StatusTool, StatusThread
 # import WhateverYouWant
 
 #
-# Your SERVICE must always have inheritance from AlgorithmSvc
+# Your SERVICE must always have inheritance from AkuandubaService
 #
-class SampleService( AlgorithmSvc ):
+class SampleService( AkuandubaService ):
 
   #
   # Here EDMs and other stuff will not be available yet, this is just for attributes initialization and superclass init
@@ -19,7 +19,7 @@ class SampleService( AlgorithmSvc ):
   def __init__(self, name):
 
     # Mandatory stuff
-    AlgorithmSvc.__init__(self, name)
+    AkuandubaService.__init__(self, name)
 
     # Attributes initialization
     self.__thisCounter = 0
@@ -41,7 +41,7 @@ class SampleService( AlgorithmSvc ):
     return StatusCode.SUCCESS
 
   #
-  # This method will run once every EventManager loop only. Use this to get the data you want from context, process it
+  # This method will run once every Akuanduba loop only. Use this to get the data you want from context, process it
   # and store it on another dataframe or whatever you wanna do.
   #
   def execute( self, context ):
@@ -64,7 +64,7 @@ class SampleService( AlgorithmSvc ):
     return StatusCode.SUCCESS
 
   #
-  # The "run" method runs on separated threads, here you can get data and store it to the EventManager queue.
+  # The "run" method runs on separated threads, here you can get data and store it to the Akuanduba queue.
   # Access to context is not recommended here, since it could break the data for the "execute" loop.
   #
   def run( self ):

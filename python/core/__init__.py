@@ -16,22 +16,26 @@ from . import StatusCode
 __all__.extend(StatusCode.__all__)
 from .StatusCode import *
 
-from . import Algorithm
-__all__.extend(Algorithm.__all__)
-from .Algorithm import *
+from . import CoreClasses
+__all__.extend(CoreClasses.__all__)
+from .CoreClasses import *
 
-from . import Service
-__all__.extend(Service.__all__)
-from .Service import *
+from . import Manager
+__all__.extend(Manager.__all__)
+from .Manager import *
 
-from . import EventManager
-__all__.extend(EventManager.__all__)
-from .EventManager import *
+from . import Akuanduba
+__all__.extend(Akuanduba.__all__)
+from .Akuanduba import *
 
-from . import EventContext
-__all__.extend(EventContext.__all__)
-from .EventContext import *
+from . import Context
+__all__.extend(Context.__all__)
+from .Context import *
 
 from . import Trigger
 __all__.extend(Trigger.__all__)
 from .Trigger import *
+
+from . import EventStatus
+__all__.extend(EventStatus.__all__)
+from .EventStatus import *

@@ -1,10 +1,10 @@
-__all__ = ["EventContext"]
+__all__ = ["Context"]
 
 from Akuanduba.core import Logger, NotSet
 from Akuanduba.core.messenger.macros import *
 from Akuanduba.core import StatusCode
 
-class EventContext(Logger):
+class Context(Logger):
 
   def __init__(self, t):
     Logger.__init__(self) 
@@ -28,7 +28,7 @@ class EventContext(Logger):
   def execute(self):
     for key, edm in self._containers.items():
       if edm.execute().isFailure():
-        MSG_WARNING( self,  'Can not execute the EDM %s', key )
+        MSG_WARNING( self,  'Can not execute the dataframe %s', key )
     return StatusCode.SUCCESS
 
   def initialize(self):

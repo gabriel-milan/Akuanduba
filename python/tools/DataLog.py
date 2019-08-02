@@ -1,11 +1,11 @@
 __all__ = ["DataLog"]
 
-from Akuanduba.core import Algorithm, StatusCode, NotSet, retrieve_kw
+from Akuanduba.core import AkuandubaTool, StatusCode, NotSet, retrieve_kw
 
-class DataLog(Algorithm):
+class DataLog(AkuandubaTool):
 
   def __init__(self, name, **kw):
-    Algorithm.__init__(self, name)
+    AkuandubaTool.__init__(self, name)
 
 
   def initialize(self):

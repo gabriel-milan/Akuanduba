@@ -1,13 +1,13 @@
 __all__ = ["EventStatus"]
 
 from Akuanduba.core import Logger, NotSet
-from Akuanduba.core import StatusCode
-from Akuanduba.dataframe import EDM
+from Akuanduba.core import StatusCode, AkuandubaDataframe
 
-class EventStatus(EDM):
+class EventStatus(AkuandubaDataframe):
 
-  def __init__(self):
+  def __init__(self, name):
     Logger.__init__(self)
+    AkuandubaDataframe.__init__(self, name)
     self._stop = False
     self._terminate = False
 

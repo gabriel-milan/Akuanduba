@@ -1,14 +1,14 @@
 __all__ = ["SampleTool"]
 
 # Mandatory imports
-from Akuanduba.core import Algorithm, StatusCode, NotSet, retrieve_kw
+from Akuanduba.core import AkuandubaTool, StatusCode, NotSet, retrieve_kw
 # Your imports go here:
 # import WhateverYouWant
 
 #
-# Your TOOL must always have inheritance from Algorithm
+# Your TOOL must always have inheritance from AkuandubaTool
 #
-class SampleTool(Algorithm):
+class SampleTool(AkuandubaTool):
 
   #
   # Here EDMs and other stuff will not be available yet, this is just for attributes initialization and superclass init
@@ -16,7 +16,7 @@ class SampleTool(Algorithm):
   def __init__(self, name, **kw):
 
     # Mandatory stuff
-    Algorithm.__init__(self, name)
+    AkuandubaTool.__init__(self, name)
 
     # Initialize stuff
     # self.__whatever = 0
@@ -33,7 +33,7 @@ class SampleTool(Algorithm):
 
 
   #
-  # This method will run once every EventManager loop only. Use this to get the data you want from context, process it
+  # This method will run once every Akuanduba loop only. Use this to get the data you want from context, process it
   # and store it on another dataframe or whatever you wanna do.
   #
   def execute(self,context):

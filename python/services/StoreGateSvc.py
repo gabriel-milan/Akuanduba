@@ -1,7 +1,7 @@
 __all__ = ['StoreGateSvc']
 
 # Mandatory imports
-from Akuanduba.core import Logger, NotSet, AlgorithmSvc
+from Akuanduba.core import Logger, NotSet, AkuandubaService
 from Akuanduba.core.messenger.macros import *
 from Akuanduba.core.constants import *
 from Akuanduba.core import StatusCode, StatusTool, StatusThread
@@ -9,11 +9,11 @@ import datetime
 import time
 import queue
 
-class StoreGateSvc( AlgorithmSvc ):
+class StoreGateSvc( AkuandubaService ):
 
   def __init__(self, name):
     # Mandatory stuff
-    AlgorithmSvc.__init__(self, name)
+    AkuandubaService.__init__(self, name)
     self._nsaves = 0
 
     import os
@@ -61,7 +61,6 @@ class StoreGateSvc( AlgorithmSvc ):
 
   def run( self ):
     while self.statusThread() is StatusThread.RUNNING:
-      self.commit()
       if self._queue.qsize() > 0:
         MSG_INFO( self,  "Saving..." )
         # get the raw to be saved in json format

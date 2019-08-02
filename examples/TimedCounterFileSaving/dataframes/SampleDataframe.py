@@ -5,25 +5,24 @@ __all__ = ["SampleDataframe"]
 # Imports
 #
 # Mandatory imports
-from Akuanduba.dataframe import EDM
 from Akuanduba.core.messenger.macros import *
 from Akuanduba.core.constants import *
-from Akuanduba.core import NotSet
+from Akuanduba.core import NotSet, AkuandubaDataframe
 # Your imports go here:
 # import WhateverYouWant
 
 #
-# Your DATAFRAME must always have inheritance from EDM
+# Your DATAFRAME must always have inheritance from AkuandubaDataframe
 #
-class SampleDataframe (EDM):
+class SampleDataframe (AkuandubaDataframe):
 
   #
   # Here EDMs and other stuff will not be available yet, this is just for attributes initialization and superclass init
   #
-  def __init__(self):
+  def __init__(self, name):
 
     # Mandatory stuff
-    EDM.__init__(self)
+    AkuandubaDataframe.__init__(self, name)
 
     # Initializing counter
     self.__counter = 0

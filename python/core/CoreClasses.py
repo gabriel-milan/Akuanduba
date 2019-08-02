@@ -1,9 +1,8 @@
-__all__ = ['Algorithm', 'AlgorithmSvc']
+__all__ = ['AkuandubaTool', 'AkuandubaService', 'AkuandubaDataframe']
 
-from Akuanduba.core import Logger, EnumStringification, NotSet
+from Akuanduba.core import Logger, EnumStringification, NotSet, StatusCode, StatusThread, StatusTool
 from Akuanduba.core.messenger.macros import *
 from Akuanduba.core.constants import *
-from Akuanduba.core import StatusCode, StatusThread, StatusTool
 from queue import Queue
 from threading import Thread
 import random
@@ -11,7 +10,7 @@ import time
 
 
 # Base class used for all tools for this framework
-class Algorithm( Logger ):
+class AkuandubaTool ( Logger ):
 
   def __init__(self, name):
     Logger.__init__(self)
@@ -75,10 +74,10 @@ class Algorithm( Logger ):
     return True
 
 
-class AlgorithmSvc( Algorithm, Thread ):
+class AkuandubaService( AkuandubaTool, Thread ):
 
   def __init__(self, name):
-    Algorithm.__init__(self, name)
+    AkuandubaTool.__init__(self, name)
     # Threading support
     self._useSafeThread = True
     self._statusThread  = StatusThread.STOP
@@ -151,7 +150,7 @@ class AlgorithmSvc( Algorithm, Thread ):
       return StatusCode.FAILURE
     else:
       MSG_DEBUG( self, "Starting safe thread with name: %s", self.name())
-      super(Algorithm,self).start()
+      super(AkuandubaTool,self).start()
       return StatusCode.SUCCESS
 
 
@@ -161,3 +160,44 @@ class AlgorithmSvc( Algorithm, Thread ):
 
   def alive(self):
     return True
+
+class AkuandubaDataframe (Logger):
+
+  def __init__(self, name):
+    Logger.__init__(self)
+    self._name = name
+    self._decoration = dict()
+    self._context = NotSet
+
+  def name (self):
+    return self._name
+
+  def setContext( self, context):
+    self._context=context
+
+  def getContext(self):
+    return self._context
+
+  def initialize(self):
+    return StatusCode.SUCCESS
+
+  def execute(self):
+    return StatusCode.SUCCESS
+
+  def finalize(self):
+    return StatusCode.SUCCESS
+
+  def setDecor(self, key, v):
+    self._decoration[key] = v
+
+  def getDecor(self,key):
+    try:
+      return self._decoration[key]
+    except KeyError:
+      MSG_WARNING( self, 'Decoration %s not found',key)
+
+  def clearDecorations(self):
+    self._decoration = dict()
+
+  def decorations(self):
+    return self._decoration.keys()

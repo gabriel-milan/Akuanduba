@@ -1,31 +1,18 @@
-__all__ = ['EventManager']
+__all__ = ['Akuanduba']
 
 from Akuanduba.core import Logger, NotSet, LoggingLevel
 from Akuanduba.core.messenger.macros import *
 from Akuanduba.core import StatusCode
-from Akuanduba.dataframe import *
-import logging
 # Time import (debug purposes)
 from time import time
 
-# get the unique identification
-def uniqueid():
-  import random
-  seed = 0
-  while True:
-    yield seed
-    seed += 1
-unique_sequence = uniqueid()
+# The main framework base class.
+# This class is responsible to build all managers for all classes.
+class Akuanduba( Logger ):
 
 
-# The main framework base class for SIM analysis.
-# This class is responsible to build all containers object and
-# manager the storegate and histogram services for all classes.
-class EventManager( Logger ):
-
-
-  def __init__(self, name, level = logging.INFO):
-    Logger.__init__(self, level=level)
+  def __init__(self, name, level = LoggingLevel.INFO):
+    Logger.__init__(self, level = level)
     import collections
     self._containers = {}
     self._context = NotSet
@@ -34,53 +21,61 @@ class EventManager( Logger ):
 
   def initialize( self ):
 
-    MSG_INFO( self, 'Initializing EventManager...')
+    MSG_INFO( self, 'Initializing Akuanduba...')
 
     # create the event context. This will be used to hold all dataframes (EDMs)
     # produced during the execution loop. Its possible to attach the thread pointers
-    from Akuanduba.core import EventContext
-    self._context = EventContext("EventContext")
+    from Akuanduba.core import Context
+    self._context = Context("Context")
 
-    from Akuanduba.dataframe import EventStatus
 
-    # Create here all dataframes
+    # Create here all dataframes the core needs
+    from Akuanduba.core import EventStatus
     self._containers = {
-        "EventStatus"     : EventStatus(),
-        "SampleDataframe" : SampleDataframe(),
+        "EventStatus"     : EventStatus("EventStatus"),
     }
-
-    # Attach all EDMs into the event context
     for key, edm in self._containers.items():
       edm.setContext(self.getContext())
       self.getContext().setHandler(key, edm)
 
+    # Getting all dataframes from user
+    from Akuanduba import DataframeManager
+    DataframeManager.resume()
+
+    # Loop over dataframes
+    for dataframe in DataframeManager.getTools():
+      MSG_INFO( self, 'Initializing DATAFRAME with name %s', dataframe.name())
+      dataframe.setContext(self.getContext())
+      self.getContext().setHandler( dataframe.name(), dataframe )
+      dataframe.level = self._level
+
     # Getting all services (threads)
-    from Akuanduba import ToolSvc
-    ToolSvc.resume()
+    from Akuanduba import ServiceManager
+    ServiceManager.resume()
 
     # Loop over services (Threading mode)
-    for tool in ToolSvc.getTools():
+    for tool in ServiceManager.getTools():
       if tool.isInitialized(): continue
-      MSG_INFO( self, 'Initializing SERVICE with name: %s', tool.name())
+      MSG_INFO( self, 'Initializing SERVICE with name %s', tool.name())
       self.getContext().setHandler( tool.name() , tool )
       tool.setContext( self.getContext() )
       tool.level = self._level
       if tool.initialize().isFailure():
-        MSG_FATAL(self, "Can not initialize SERVICE %s.", key)
+        MSG_FATAL(self, "Couldn't initialize SERVICE %s.", key)
 
     # Getting all tools
-    from Akuanduba import ToolMgr
-    ToolMgr.resume()
+    from Akuanduba import ToolManager
+    ToolManager.resume()
 
     # Loop over tools list.
-    for tool in ToolMgr.getTools():
+    for tool in ToolManager.getTools():
       if tool.isInitialized():continue
-      MSG_INFO( self, 'Initializing TOOL with name: %s', tool.name())
+      MSG_INFO( self, 'Initializing TOOL with name %s', tool.name())
       self.getContext().setHandler( tool.name() , tool )
       tool.setContext( self.getContext() )
       tool.level = self._level
       if tool.initialize().isFailure():
-        MSG_FATAL(self, "Can not initialize TOOL %s.", tool.name())
+        MSG_FATAL(self, "Couldn't initialize TOOL %s.", tool.name())
 
     # Checks for error in the context
     if self.getContext().initialize().isFailure():
@@ -96,7 +91,7 @@ class EventManager( Logger ):
     MSG_INFO( self, 'Running...')
     status = self.getContext().getHandler("EventStatus")
 
-    from Akuanduba import ToolMgr, ToolSvc
+    from Akuanduba import ToolManager, ServiceManager
 
     # For any moment, any tool can call terminate to interrupt
     # the while loop and finalize the execute method
@@ -105,7 +100,7 @@ class EventManager( Logger ):
 
       # Services
       MSG_DEBUG( self, "Starting new loop")
-      for tool in ToolSvc.getTools():
+      for tool in ServiceManager.getTools():
 
         MSG_DEBUG( self, "Execute SERVICE %s...",tool.name())
         if( tool.execute( self.getContext() ).isFailure() ):
@@ -119,7 +114,7 @@ class EventManager( Logger ):
           break
 
       # Tools
-      for tool in ToolMgr.getTools():
+      for tool in ToolManager.getTools():
         MSG_DEBUG( self, "Execute TOOL %s...",tool.name())
         if( tool.execute( self.getContext() ).isFailure() ):
           MSG_WARNING( self, "Impossible to execute TOOL %s.", tool.name())
@@ -140,16 +135,16 @@ class EventManager( Logger ):
 
   def finalize(self):
 
-    from Akuanduba import ToolSvc, ToolMgr
+    from Akuanduba import ServiceManager, ToolManager
 
     # Services
-    for tool in ToolSvc.getTools():
+    for tool in ServiceManager.getTools():
       if( tool.finalize().isFailure() ):
         MSG_WARNING( self, "Impossible to execute SERVICE %s.", tool.name())
         return StatusCode.FAILURE
 
     # Tools
-    for tool in ToolMgr.getTools():
+    for tool in ToolManager.getTools():
       if( tool.finalize().isFailure() ):
         MSG_WARNING( self, "Impossible to execute TOOL %s.", tool.name())
         return StatusCode.FAILURE

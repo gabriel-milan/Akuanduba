@@ -2,7 +2,7 @@ __all__ = ['Trigger', 'TAccept']
 
 from Akuanduba.core import Logger, EnumStringification, NotSet
 from Akuanduba.core.messenger.macros import *
-from Akuanduba.core import StatusCode, StatusTool,  Algorithm
+from Akuanduba.core import StatusCode, StatusTool,  AkuandubaTool
 
 
 class TAccept(object):
@@ -31,10 +31,10 @@ class TAccept(object):
 
 
 
-class Trigger( Algorithm ):
+class Trigger( AkuandubaTool ):
 
   def __init__(self, name):
-    Algorithm.__init__(self, name)
+    AkuandubaTool.__init__(self, name)
     import collections
     self._hypos = collections.OrderedDict()
 

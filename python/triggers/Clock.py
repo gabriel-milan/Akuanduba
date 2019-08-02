@@ -1,15 +1,15 @@
 # All list
 __all__ = ["Clock"]
 
-from Akuanduba.core import Algorithm, StatusCode, NotSet
+from Akuanduba.core import AkuandubaTool, StatusCode, NotSet
 from Akuanduba.core.messenger.macros import *
 import time
 
-class Clock( Algorithm ):
+class Clock( AkuandubaTool ):
 
   def __init__(self, name, maxseconds):
     
-    Algorithm.__init__(self,name)
+    AkuandubaTool.__init__(self,name)
     self._maxseconds = maxseconds
     self._then = NotSet
     self._ntriggers = 0
