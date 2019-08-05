@@ -5,7 +5,6 @@ from Akuanduba.core.messenger.macros import *
 from Akuanduba.core.constants import *
 from queue import Queue
 from threading import Thread
-import random
 import time
 
 

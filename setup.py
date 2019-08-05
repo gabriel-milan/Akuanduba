@@ -1,0 +1,27 @@
+from distutils.core import setup
+setup(
+  name = 'Akuanduba',
+  packages = ['Akuanduba'],
+  version = '0.1',
+  license='GPL-3.0',
+  description = 'Akuanduba is a Python framework that eases manipulation of multiple running threads and shared resources. Its name was inspired by a god of the Brazilian mythology: Akuanduba, the god of order.',
+  author = 'Gabriel Gazola Milan',
+  author_email = 'gabriel.gazola@poli.ufrj.br',
+  url = 'https://github.com/gabriel-milan/Akuanduba',
+  download_url = 'https://github.com/gabriel-milan/Akuanduba/archive/v0.1.tar.gz',
+  keywords = ['framework', 'threading', 'shared resources', 'flexibility', 'python'],
+  install_requires=[
+          'numpy',
+          'datetime',
+      ],
+  classifiers=[
+    'Development Status :: 4 - Beta',
+    'Intended Audience :: Developers',
+    'Topic :: Software Development :: Libraries :: Python Modules',
+    'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.4',
+    'Programming Language :: Python :: 3.5',
+    'Programming Language :: Python :: 3.6',
+  ],
+)
