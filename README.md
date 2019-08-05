@@ -77,7 +77,7 @@ Let's say you have two *services* that acquire data from different sources and o
 
 <p  align="center">
 
-<img  src="https://raw.githubusercontent.com/gabriel-milan/Akuanduba/master/img/execution.png.jpg">
+<img  src="https://raw.githubusercontent.com/gabriel-milan/Akuanduba/master/img/execution.png">
 
 </p>
 
