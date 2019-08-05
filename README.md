@@ -20,6 +20,38 @@ This is really a TL;DR section:
 * Effortless threading and shared resources manipulation;
 * Smooth attaching and removing features from your script.
 
+# First steps
+
+* Clone this repository:
+
+```
+git clone https://github.com/gabriel-milan/Akuanduba
+```
+
+* Install this library:
+
+```
+pip3 install Akuanduba
+```
+
+* Go to the example script folder:
+
+```
+cd Akuanduba/examples/TimedCounterFileSaving
+```
+
+* Read the script, in order to understand what's supposed to happen when you run it:
+
+```
+vim SampleScript.py
+```
+
+* Run the example script:
+
+```
+python3 SampleScript.py
+```
+
 # The paradigm
 
 ## Base classes
