@@ -10,7 +10,19 @@ Akuanduba is a Python framework that eases manipulation of multiple running thre
 
 This framework's been based on the [Gaugi](https://gitlab.cern.ch/jodafons/gaugi) project, a framework that João, the author of Gaugi, presented to me.
 
+# Top 5 reasons for Akuanduba
+
+This is really a TL;DR section:
+
+* Flexible;
+* Easy developing and debugging;
+* Robust structure;
+* Effortless threading and shared resources manipulation;
+* Smooth attaching and removing features from your script.
+
 # The paradigm
+
+## Base classes
 
 Using Akuanduba, you'll have three base classes you can use to attend your needs, as they relate to one another through a common class called *Context* (this will be explained really soon). The three classes are:
 
@@ -24,6 +36,8 @@ Using Akuanduba, you'll have three base classes you can use to attend your needs
 
 **AkuandubaService** is a base class for parallel threads. These *services* have two main methods: "run", which is a loop that will be running parallel to the whole framework and "execute", that's executed once in every call. **Example**: Use services to acquire data.
 
+## Other main concepts
+
 Besides these base classes, Akuanduba relies on few other main concepts:
 
 * *Context*;
@@ -34,4 +48,42 @@ Besides these base classes, Akuanduba relies on few other main concepts:
 
 The **Context** is an abstraction that holds every single thing attached to the framework: *tools*, *services* and *data frames*. This way, everything is accessible from any other component attached to Akuanduba.
 
-### To be continued... 
+The **Managers** (*DataframeManager*, *ToolManager* and *ServiceManager*) are all based on the *Manager* class, the only difference among them is that they manage different things. You can manage *data frames*, *tools* and *services*, respectively. In other words, you can attach them with the *\_\_add\_\_* operation and retrieve them with the *retrieve* method. The things you attach to these managers will run in the order you do it (execution will be better discussed later).
+
+The **Trigger** is a class that inherits from *AkuandubaTool*. Its purpose is to build an object you can attach multiple hypothesis tests in order to trigger an action. There's a functional version of this *tool* on this version of Akuanduba, but it still doesn't satisfy me. I'll be working on improvements.
+
+## Execution
+
+Akuanduba itself has three main methods: *initialize*, *execute* and *finalize*.
+
+The *initialize* method follows these steps:
+
+* Insert the framework status into the *Context*;
+* Insert all the *data frames* on the *DataframeManager* into the *Context*;
+* Insert all the *services* on the *ServiceManager* into the *Context*, running them;
+* Insert all the *tools* on the *ToolManager* into the *Context*, running them;
+* Checks for error in the *Context* initialization.
+
+The *execute* method is the main execution loop. Its tasks are:
+
+* Loop through the *services*, calling their *execute* methods;
+* Loop through the *tools*, calling their *execute* methods;
+
+And finally, the *finalize* method just tries to kill every thread created by the Akuanduba framework.
+
+### Example
+
+Let's say you have two *services* that acquire data from different sources and one single *tool* that process the whole data. You could build a script that attaches both *services* to the *ServiceManager* and the *tool* to the *ToolManager*. Let's say that, for this purpose, you've created two *data frames*, one for storing the raw data and one for the processed data. A diagram for your script's execution would be the following:
+
+<p  align="center">
+
+<img  src="https://raw.githubusercontent.com/gabriel-milan/Akuanduba/master/img/execution.png.jpg">
+
+</p>
+
+As you may see, the *run* method of the *services* acquire data in real time (∞) and append it to its own queue. On the main Akuanduba loop, the *execute* methods are called and the data is stored on the *data frames* (1 and 2). After that, the *tools* *execute* method will be called, where the data will be processed and stored on another *data frame* (3).
+
+# To-Do! (next releases)
+
+* Improve Logger class;
+* Implement lock on dataframes.
