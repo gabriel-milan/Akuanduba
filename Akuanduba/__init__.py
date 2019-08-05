@@ -1,3 +1,4 @@
+name = "Akuanduba"
 __all__ = []
 
 from . import core

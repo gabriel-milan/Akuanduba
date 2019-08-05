@@ -152,7 +152,7 @@ class Logger(object):
           record.color = self.colors[levelname]
         return logging.Formatter.format(self, record)
   
-    import os, sys
+    import sys
     formatter = Formatter(
                          "%(asctime)s | Py.%(name)-33.33s %(levelname)7.7s %(message)s", 
                          True
