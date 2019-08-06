@@ -171,4 +171,7 @@ class AkuandubaTrigger ( AkuandubaTool ):
 
     if issubclass(type(stuff), TriggerActivity):
       self._activities[stuff.name()] = stuff
-      return self
+    elif issubclass(type(stuff), TriggerCondition):
+      self._conditions[stuff.name()] = stuff
+    else:
+      MSG_ERROR(self, "Anything you add to a AkuandubaTrigger object must inherit either from TriggerActivity or TriggerCondition")
