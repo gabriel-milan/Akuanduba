@@ -59,3 +59,9 @@ class StatusThread(EnumStringification):
   RUNNING = 1
   STOP    = 0
 
+class StatusTrigger (EnumStringification):
+  """
+    Use this to check the trigger status
+  """
+  TRIGGERED = True
+  NOT_TRIGGERED = False

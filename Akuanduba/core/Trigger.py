@@ -2,7 +2,8 @@ __all__ = ['Trigger', 'TAccept']
 
 from Akuanduba.core import Logger, EnumStringification, NotSet
 from Akuanduba.core.messenger.macros import *
-from Akuanduba.core import StatusCode, StatusTool,  AkuandubaTool
+from Akuanduba.core import StatusCode, StatusTool, StatusTrigger, AkuandubaTool
+from Akuanduba.core.Manager import *
 
 
 class TAccept(object):
@@ -97,3 +98,77 @@ class Trigger( AkuandubaTool ):
         return StatusCode.FAILURE
     self.fina_lock()
     return StatusCode.SUCCESS
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+#
+# Base class for trigger conditions
+#
+class TriggerCondition ( Logger ):
+
+  # Init
+  def __init__ (self, name):
+    Logger.__init__(self)
+    self._name = name
+
+  # Get name
+  def name (self):
+    return self._name
+
+  # Ordinary methods
+  def initialize (self):
+    return StatusCode.SUCCESS
+
+  def execute (self):
+    return StatusTrigger.NOT_TRIGGERED
+  
+  def finalize (self):
+    return StatusCode.SUCCESS
+
+#
+# Base class for activities that will run when trigger is triggered
+#
+class TriggerActivity ( AkuandubaTool ):
+
+  # Init
+  def __init__ (self, name):
+    AkuandubaTool.__init__(self, name)
+
+  # Get name
+  def name (self):
+    return self._name
+
+  # Ordinary methods
+  def initialize (self):
+    return StatusCode.SUCCESS
+
+  def execute (self):
+    return StatusCode.SUCCESS
+  
+  def finalize (self):
+    return StatusCode.SUCCESS
+
+#
+# Main trigger class
+#
+class AkuandubaTrigger ( AkuandubaTool ):
+
+  # Init
+  def __init__(self, name):
+    AkuandubaTool.__init__(self, name)
+
+    import collections
+    self._conditions = collections.OrderedDict()
+    self._activities = collections.OrderedDict()
+
+    self._toolManager = Manager(name + " Trigger's ToolManager", "Tool")
+
+  # Redefining the __add__ method in order to ease manipulation
+  def __add__(self, stuff):
+
+    if issubclass(type(stuff), TriggerActivity):
+      self._activities[stuff.name()] = stuff
+      return self
