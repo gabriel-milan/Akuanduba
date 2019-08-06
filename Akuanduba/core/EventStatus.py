@@ -21,7 +21,11 @@ class EventStatus(AkuandubaDataframe):
   def finalize(self):
     return StatusCode.SUCCESS
 
+  def acquire (self, timeout = -1):
+    return StatusCode.SUCCESS
 
+  def release (self):
+    return StatusCode.SUCCESS
 
   def forceStop(self):
     self._stop = True

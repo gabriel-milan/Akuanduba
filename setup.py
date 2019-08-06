@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
   name = 'Akuanduba',
-  version = '0.1.2',
+  version = '0.1.3',
   license='GPL-3.0',
   description = 'Akuanduba is a Python framework that eases manipulation of multiple running threads and shared resources. Its name was inspired by a god of the Brazilian mythology: Akuanduba, the god of order.',
   long_description = long_description,

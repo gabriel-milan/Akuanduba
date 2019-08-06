@@ -24,6 +24,8 @@ class DataLog(AkuandubaTool):
       MSG_ERROR(self, "There is no StoreGate into the context")
     storage.send( [sampleDataframe] )
 
+    sampleDataframe.release()
+
     return StatusCode.SUCCESS
 
   def finalize(self):

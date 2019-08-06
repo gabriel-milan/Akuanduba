@@ -44,6 +44,9 @@ class SampleTool(AkuandubaTool):
     # Incrementing counter
     sampleDataframe.incrementCounter()
 
+    # Always release the dataframes
+    sampleDataframe.release()
+
     # Always return SUCCESS
     return StatusCode.SUCCESS
 

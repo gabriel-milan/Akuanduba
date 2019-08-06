@@ -3,6 +3,7 @@ __all__ = ["Context"]
 from Akuanduba.core import Logger, NotSet
 from Akuanduba.core.messenger.macros import *
 from Akuanduba.core import StatusCode
+from Akuanduba.core.CoreClasses import AkuandubaDataframe
 
 class Context(Logger):
 
@@ -23,7 +24,12 @@ class Context(Logger):
       MSG_WARNING(self, "Tried to access key {} but it's not yet set.".format(key))
       return NotSet
     else:
-      return self._containers[key]
+      handler = self._containers[key]
+      if issubclass(type(handler), AkuandubaDataframe):
+        handler.acquire()
+        return handler
+      else:
+        return handler
 
   def execute(self):
     for key, edm in self._containers.items():

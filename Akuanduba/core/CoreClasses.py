@@ -4,7 +4,7 @@ from Akuanduba.core import Logger, EnumStringification, NotSet, StatusCode, Stat
 from Akuanduba.core.messenger.macros import *
 from Akuanduba.core.constants import *
 from queue import Queue
-from threading import Thread
+from threading import Thread, Lock
 import time
 
 
@@ -167,6 +167,13 @@ class AkuandubaDataframe (Logger):
     self._name = name
     self._decoration = dict()
     self._context = NotSet
+    self._lock = Lock()
+
+  def acquire (self, timeout = -1):
+    return self._lock.acquire(timeout = timeout)
+
+  def release (self):
+    return self._lock.release()
 
   def name (self):
     return self._name
