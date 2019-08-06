@@ -1,13 +1,12 @@
 __all__ = ['get_attributes','retrieve_kw', 'checkForUnusedVars']
 
-import re, os, __main__
+import re, __main__
 import sys
 import code
 import types
 import pickle as cPickle
 import gzip
 import inspect
-import numpy as np
 from Akuanduba.core.gtypes import NotSet
 
 

@@ -117,5 +117,5 @@ As you may see, the *run* method of the *services* acquire data in real time (âˆ
 
 # To-Do! (next releases)
 
-* Improve Logger class;
-* Implement lock on dataframes.
+* Implement lock on dataframes;
+* Improve triggers.

@@ -8,16 +8,15 @@ class FatalError(RuntimeError):
   pass
 
 class LoggingLevel ( EnumStringification ):
-  """
-    A wrapper for logging levels, which allows stringification of known log
-    levels.
-  """
+  #
+  #   A wrapper for logging levels, which allows stringification of known log
+  #   levels.
+  #
   VERBOSE  = logging.DEBUG - 1
   DEBUG    = logging.DEBUG
   INFO     = logging.INFO
   WARNING  = logging.WARNING
   ERROR    = logging.ERROR
-  CRITICAL = logging.CRITICAL
   FATAL    = logging.CRITICAL
   MUTE     = logging.CRITICAL # MUTE Still displays fatal messages.
 
@@ -103,25 +102,37 @@ logging.Logger.info = info
 logging.Logger.warning = warning
 logging.Logger.error = error
 logging.Logger.fatal = fatal
-logging.Logger.critical = fatal
-
-
-
-
 
 # The logger main object
 class Logger(object):
 
-  """
-    >>> Internal method to get the formatter custom obj.
-  """
+  #
+  # >>> Internal method to get the formatter custom obj.
+  #
   def _getFormatter(self):
+
     class Formatter(logging.Formatter):
-      import numpy as np
-      gray, red, green, yellow, blue, magenta, cyan, white = ['0;%d' % int(d) for d in (30 + np.arange(8))]
-      bold_black, bold_red, bold_green, bold_yellow, bold_blue, bold_magenta, bold_cyan, \
-          bold_white = ['1;%d' % d for d in 90 + np.arange(8)]
-      gray = '1;30'
+
+      # Normal
+      gray = '0;30'
+      red = '0;31'
+      green = '0;32'
+      yellow = '0;33'
+      blue = '0;34'
+      magenta = '0;35'
+      cyan = '0;36'
+      white = '0;37'
+      
+      # Bold
+      bold_black = '1;30'
+      bold_red = '1;31'
+      bold_green = '1;32'
+      bold_yellow = '1;33'
+      bold_blue = '1;34'
+      bold_magenta = '1;35'
+      bold_cyan = '1;36'
+      bold_white = '1;37'
+
       reset_seq = "\033[0m"
       color_seq = "\033[%(color)sm"
       colors = {
@@ -130,54 +141,38 @@ class Logger(object):
                  'INFO':     green,
                  'WARNING':  bold_yellow,
                  'ERROR':    red,
-                 'CRITICAL': bold_red,
                  'FATAL':    bold_red,
                }
   
       # It's possible to overwrite the message color by doing:
       # logger.info('MSG IN MAGENTA', extra={'color' : Logger._formatter.bold_magenta})
   
-      def __init__(self, msg, use_color = False):
-        if use_color:
-          logging.Formatter.__init__(self, self.color_seq + msg + self.reset_seq )
-        else:
-          logging.Formatter.__init__(self, msg)
-        self.use_color = use_color
+      def __init__(self, msg):
+        logging.Formatter.__init__(self, self.color_seq + msg + self.reset_seq )
   
       def format(self, record):
         if not(hasattr(record,'nl')):
           record.nl = True
         levelname = record.levelname
-        if not 'color' in record.__dict__ and self.use_color and levelname in self.colors:
+        if not 'color' in record.__dict__ and levelname in self.colors:
           record.color = self.colors[levelname]
         return logging.Formatter.format(self, record)
   
-    import sys
-    formatter = Formatter(
-                         "%(asctime)s | Py.%(name)-33.33s %(levelname)7.7s %(message)s", 
-                         True
-                         )
+    formatter = Formatter("%(asctime)s | Py.%(name)-33.33s %(levelname)7.7s %(message)s")
     return formatter
   
-
   def __init__(self, **kw):
-    import sys
-    # create logger with 'spam_application'
-    from copy import copy
     self._level = retrieve_kw( kw, 'level', LoggingLevel.INFO)
     self._logger = logging.getLogger(self.__class__.__name__)
-    ch = logging.StreamHandler(sys.__stdout__)
-    formatter =  self._getFormatter()
-    ch.setLevel(logging.NOTSET)
-    ch.setFormatter(formatter)
-    # add the handlers to #the logger
-    self._logger.handlers = [] # Force only one handler
+    ch = logging.StreamHandler()
+    ch.setLevel(self._level)
+    ch.setFormatter(self._getFormatter())
+    self._logger.handlers = []
     self._logger.addHandler(ch)
     self._logger.setLevel(self._level)
 
   def setLevel(self, lvl):
     self._logger.setLevel(lvl)
-
 
   def getLevel(self):
     return self._level

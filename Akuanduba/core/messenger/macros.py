@@ -1,5 +1,4 @@
 __all__ = [
-           #PromeTHeus_MSG_LEVEL
            "MSG_VERBOSE",
            "MSG_DEBUG",
            "MSG_INFO",
