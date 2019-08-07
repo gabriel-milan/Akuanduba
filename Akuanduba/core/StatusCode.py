@@ -1,4 +1,4 @@
-__all__ = [ 'StatusCode', 'StatusTool', 'StatusThread']
+__all__ = [ 'StatusCode', 'StatusTool', 'StatusThread', 'StatusTrigger']
 
 from Akuanduba.core import EnumStringification, NotSet
 

@@ -1,4 +1,4 @@
-__all__ = ["ServiceManager", "ToolManager", "DataframeManager", "Manager"]
+__all__ = ["ServiceManager", "ToolManager", "DataframeManager"]
 
 from Akuanduba.core.messenger import Logger
 from Akuanduba.core.messenger.macros import *

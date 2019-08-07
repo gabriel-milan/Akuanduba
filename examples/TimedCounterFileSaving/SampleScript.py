@@ -6,12 +6,12 @@
 #
 
 # Akuanduba imports
-from Akuanduba.core import Akuanduba, LoggingLevel, Trigger
+from Akuanduba.core import Akuanduba, LoggingLevel, AkuandubaTrigger
 from Akuanduba.services import StoreGateSvc
 from Akuanduba.tools import DataLog
 from Akuanduba import ServiceManager, ToolManager, DataframeManager
 from Akuanduba.core.constants import Second
-from Akuanduba.triggers import Clock
+from Akuanduba.triggers import TimerCondition
 
 # This sample's imports
 from dataframes.SampleDataframe import *
@@ -25,15 +25,21 @@ storage = StoreGateSvc( "StoreGateSvc" )
 # Creating tools
 tool = SampleTool ("Sample Tool Name")
 
+# Creating file saver (it's also a tool)
+save_file = DataLog( "File saver" )
+
 # Creating dataframes
 sampleDataframe = SampleDataframe ("SampleDataframe")
 
 # Creating time trigger
-trigger  = Trigger("5-second trigger")
-trigger += Clock( "5-second trigger", 5 * Second )
+trigger  = AkuandubaTrigger("Sample Trigger Name", triggerType = 'or')
 
-# Creating file saver
-save_file = DataLog( "File saver" )
+# Append conditions and tools to trigger just adding them
+# Tools appended to the trigger will only run when trigger is StatusTrigger.TRIGGERED,
+# and will run in the order they've been appended
+trigger += TimerCondition( "5-second condition", 5 * Second )
+trigger += tool
+trigger += save_file
 
 # Creating Akuanduba
 manager = Akuanduba("Akuanduba", level=LoggingLevel.INFO)
@@ -47,10 +53,7 @@ ServiceManager += storage
 # ToolManager += TOOL_1
 # ToolManager += TOOL_2
 #
-# Every tool appended after this trigger, will only run after it
 ToolManager += trigger
-ToolManager += tool
-ToolManager += save_file
 
 # Apprending dataframes
 DataframeManager += sampleDataframe
