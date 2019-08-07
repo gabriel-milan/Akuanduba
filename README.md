@@ -78,9 +78,7 @@ Besides these base classes, Akuanduba relies on few other main concepts:
 * *ServiceManager*;
 * *AkuandubaTrigger*.
 
-The **Context** is an abstraction that holds every single thing attached to the framework: *tools*, *services* and *data frames*. This way, everything is accessible from any other component attached to Akuanduba.
-
-⚠ WARNING: Always call the *release()* method on every data frame after using it, or else it will be locked for other *tools* and *services*. ⚠
+The **Context** is an abstraction that holds every single thing attached to the framework: *tools*, *services* and *data frames*. This way, everything is accessible from any other component attached to Akuanduba. Every *dataframe* you get from the context is locked to your *execute* method and released only after its execution.
 
 The **Managers** (*DataframeManager*, *ToolManager* and *ServiceManager*) are all based on the *Manager* class, the only difference among them is that they manage different things. You can manage *data frames*, *tools* and *services*, respectively. In other words, you can attach them with the *\_\_add\_\_* operation and retrieve them with the *retrieve* method. The things you attach to these managers will run in the order you do it (execution will be better discussed later).
 
@@ -119,5 +117,4 @@ As you may see, the *run* method of the *services* acquire data in real time (�
 
 # To-Do! (next releases)
 
-* Remove deprecated implementation of triggers;
-* Automatic releasing *data frames* after the *execute* methods.
+* Remove deprecated implementation of triggers.

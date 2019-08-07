@@ -216,11 +216,13 @@ class AkuandubaTrigger ( AkuandubaTool ):
     
     # If it triggers, than run own stack
     if (result == StatusTrigger.TRIGGERED):
+      context = self.getContext()
       MSG_INFO (self, "{} triggered!".format(self._name))
       for tool in [tool for _, tool in self._activities.items()]:
         MSG_INFO (self, "- Executing tool {}...".format(tool.name()))
         if (tool.execute (self.getContext()).isFailure()):
           MSG_ERROR (self, "-- Failed to execute tool {}".format(tool.name()))
+        context.releaseAllContainers()
         
     return StatusCode.SUCCESS
 

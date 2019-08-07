@@ -89,6 +89,7 @@ class Akuanduba( Logger ):
   def execute(self):
 
     MSG_INFO( self, 'Running...')
+    context = self.getContext()
     status = self.getContext().getHandler("EventStatus")
 
     from Akuanduba import ToolManager, ServiceManager
@@ -106,6 +107,9 @@ class Akuanduba( Logger ):
         if( tool.execute( self.getContext() ).isFailure() ):
           MSG_WARNING( self, "Impossible to execute SERVICE %s.", tool.name())
 
+        # Releasing dataframes
+        context.releaseAllContainers()
+
         # Use interrupt to stop the tool stack execution
         if status.stop():
           MSG_DEBUG( self, "Stop stack execution.")
@@ -118,6 +122,9 @@ class Akuanduba( Logger ):
         MSG_DEBUG( self, "Execute TOOL %s...",tool.name())
         if( tool.execute( self.getContext() ).isFailure() ):
           MSG_WARNING( self, "Impossible to execute TOOL %s.", tool.name())
+
+        # Releasing dataframes
+        context.releaseAllContainers()
 
         # Use interrupt to stop the tool stack execution
         if status.stop():

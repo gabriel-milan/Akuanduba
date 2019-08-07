@@ -11,6 +11,7 @@ class Context(Logger):
     Logger.__init__(self) 
     import collections
     self._containers = collections.OrderedDict()
+    self._lockedContainers = []
     self._decoration = dict()
 
   def setHandler(self, key, obj):
@@ -21,15 +22,31 @@ class Context(Logger):
 
   def getHandler(self,key):
     if not key in self._containers.keys():
-      MSG_WARNING(self, "Tried to access key {} but it's not yet set.".format(key))
+      MSG_ERROR (self, "Tried to access key {} but it's not yet set.".format(key))
       return NotSet
     else:
       handler = self._containers[key]
       if issubclass(type(handler), AkuandubaDataframe):
+        MSG_DEBUG(self, "Acquiring lock from {} dataframe".format(handler.name()))
         handler.acquire()
+        self._lockedContainers.append (handler.name())
         return handler
       else:
         return handler
+
+  def releaseContainer (self, key):
+    if not key in self._lockedContainers:
+      MSG_ERROR (self, "Tried to release container {} but it's not on the locked list".format(key))
+      return NotSet
+    else:
+      container = self._containers[key]
+      MSG_DEBUG(self, "Releasing lock from {} dataframe".format(container.name()))
+      container.release()
+      self._lockedContainers.remove(key)
+
+  def releaseAllContainers (self):
+    for key in self._lockedContainers:
+      self.releaseContainer(key)
 
   def execute(self):
     for key, edm in self._containers.items():

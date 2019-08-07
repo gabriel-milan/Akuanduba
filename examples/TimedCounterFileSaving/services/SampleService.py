@@ -50,9 +50,6 @@ class SampleService( AkuandubaService ):
     sampleDataframe = self.getContext().getHandler("SampleDataframe")
     MSG_WARNING(self, sampleDataframe.getCounter())
 
-    # Always release the data frames
-    sampleDataframe.release()
-
     # Always return SUCCESS
     return StatusCode.SUCCESS
 
