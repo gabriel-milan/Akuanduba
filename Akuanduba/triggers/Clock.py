@@ -18,6 +18,8 @@ class Clock( AkuandubaTool ):
 
     self.getContext().setDecor("TriggerTimer", self._maxseconds)
 
+    MSG_WARNING(self, "WARNING: This is deprecated and will be removed in the future.")
+
     self.init_lock()
     return StatusCode.SUCCESS
 

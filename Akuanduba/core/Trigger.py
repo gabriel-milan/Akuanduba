@@ -54,7 +54,10 @@ class Trigger( AkuandubaTool ):
       if hypo.initialize().isFailure():
         MSG_FATAL( self, "Can not initialize hypothesis %s.", key)
 
+    MSG_WARNING(self, "WARNING: This is deprecated and will be removed in the future.")
+
     MSG_INFO( self, "Trigger %s initialization completed.",self.name())
+
     self.init_lock()
     return StatusCode.SUCCESS
 
