@@ -76,7 +76,7 @@ Besides these base classes, Akuanduba relies on few other main concepts:
 * *DataframeManager*;
 * *ToolManager*;
 * *ServiceManager*;
-* *Trigger*.
+* *AkuandubaTrigger*.
 
 The **Context** is an abstraction that holds every single thing attached to the framework: *tools*, *services* and *data frames*. This way, everything is accessible from any other component attached to Akuanduba.
 
@@ -84,7 +84,7 @@ The **Context** is an abstraction that holds every single thing attached to the 
 
 The **Managers** (*DataframeManager*, *ToolManager* and *ServiceManager*) are all based on the *Manager* class, the only difference among them is that they manage different things. You can manage *data frames*, *tools* and *services*, respectively. In other words, you can attach them with the *\_\_add\_\_* operation and retrieve them with the *retrieve* method. The things you attach to these managers will run in the order you do it (execution will be better discussed later).
 
-The **Trigger** is a class that inherits from *AkuandubaTool*. Its purpose is to build an object you can attach multiple hypothesis tests in order to trigger an action. There's a functional version of this *tool* on this version of Akuanduba, but it still doesn't satisfy me. I'll be working on improvements.
+The **AkuandubaTrigger** is a class that inherits from *AkuandubaTool*. Its purpose is to build an object you can attach multiple hypothesis tests (that must inherit from *TriggerCondition*) and *tools* in order to trigger the *execute* method of all these *tools*. You can use three types of triggers: 'and', 'or' and 'xor', all of them self-explanatory.
 
 ## Execution
 
@@ -119,5 +119,5 @@ As you may see, the *run* method of the *services* acquire data in real time (âˆ
 
 # To-Do! (next releases)
 
-* Automatic releasing *data frames* after the *execute* methods;
-* Improve triggers.
+* Remove deprecated implementation of triggers;
+* Automatic releasing *data frames* after the *execute* methods.
