@@ -39,3 +39,7 @@ from .Trigger import *
 from . import EventStatus
 __all__.extend(EventStatus.__all__)
 from .EventStatus import *
+
+from . import Watchdog
+__all__.extend(Watchdog.__all__)
+from .Watchdog import *

@@ -7,3 +7,4 @@ build
 Akuanduba.egg-info/
 dist/
 upload_PyPI.sh
+test.py
