@@ -3,6 +3,7 @@ __all__ = ['Akuanduba']
 from Akuanduba.core import Logger, NotSet, LoggingLevel
 from Akuanduba.core.messenger.macros import *
 from Akuanduba.core import StatusCode
+from Akuanduba.core.Watchdog import Watchdog
 # Time import (debug purposes)
 from time import time
 
@@ -28,6 +29,8 @@ class Akuanduba( Logger ):
     from Akuanduba.core import Context
     self._context = Context("Context")
 
+    # Sets watchdog's context
+    Watchdog.setContext(self.getContext())
 
     # Create here all dataframes the core needs
     from Akuanduba.core import EventStatus
@@ -109,6 +112,9 @@ class Akuanduba( Logger ):
 
         # Releasing dataframes
         context.releaseAllContainers()
+
+        # Feeding WDTs
+        Watchdog.feed(tool.name(), 'execute')
 
         # Use interrupt to stop the tool stack execution
         if status.stop():

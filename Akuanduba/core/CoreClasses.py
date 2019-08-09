@@ -100,13 +100,13 @@ class AkuandubaService( AkuandubaTool, Thread ):
 
   def execute(self, context):
     self.setContext(context)
-    if self.isSafeThread() and self.statusThread() is StatusThread.RUNNING:
+    if self.isSafeThread() and self.statusThread() == StatusThread.RUNNING:
       pass
     return StatusCode.SUCCESS
 
 
   def finalize(self):
-    if self.isSafeThread() and self.statusThread() is StatusThread.RUNNING:
+    if self.isSafeThread() and self.statusThread() == StatusThread.RUNNING:
       MSG_INFO( self, "Sending stop signal...")
       self.forceStopThread()
       self.do_run=False
@@ -149,7 +149,7 @@ class AkuandubaService( AkuandubaTool, Thread ):
       return StatusCode.FAILURE
     else:
       MSG_DEBUG( self, "Starting safe thread with name: %s", self.name())
-      super(AkuandubaTool,self).start()
+      super().start()
       return StatusCode.SUCCESS
 
 

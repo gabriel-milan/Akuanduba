@@ -12,6 +12,7 @@ from Akuanduba.tools import DataLog
 from Akuanduba import ServiceManager, ToolManager, DataframeManager
 from Akuanduba.core.constants import Second
 from Akuanduba.triggers import TimerCondition
+from Akuanduba.core.Watchdog import Watchdog
 
 # This sample's imports
 from dataframes.SampleDataframe import *
@@ -24,6 +25,14 @@ storage = StoreGateSvc( "StoreGateSvc" )
 
 # Creating tools
 tool = SampleTool ("Sample Tool Name")
+tool_params = {
+    "execute" : {
+            "timeout" : 5,
+            "action" : 'terminate',
+    },
+}
+Watchdog += tool, tool_params
+Watchdog.enable()
 
 # Creating file saver (it's also a tool)
 save_file = DataLog( "File saver" )

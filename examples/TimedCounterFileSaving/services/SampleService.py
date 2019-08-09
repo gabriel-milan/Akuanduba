@@ -5,6 +5,7 @@ from Akuanduba.core import Logger, NotSet, AkuandubaService
 from Akuanduba.core.messenger.macros import *
 from Akuanduba.core.constants import *
 from Akuanduba.core import StatusCode, StatusTool, StatusThread
+from Akuanduba.core.Watchdog import Watchdog
 # Your own imports go here:
 # import WhateverYouWant
 
@@ -31,7 +32,7 @@ class SampleService( AkuandubaService ):
   def initialize(self):
 
     # Initialize thread, as every service runs as a thread
-    super(SampleService, self).initialize()
+    super().initialize()
     if self.start().isFailure():
       MSG_FATAL( self, "Impossible to initialize the %s service", self.name())
       return StatusCode.FAILURE
@@ -58,7 +59,7 @@ class SampleService( AkuandubaService ):
   #
   def finalize(self):
 
-    super(SampleService,self).finalize()
+    super().finalize()
 
     # Always return SUCCESS
     return StatusCode.SUCCESS
@@ -70,7 +71,8 @@ class SampleService( AkuandubaService ):
   def run( self ):
 
     # This is the main loop for the thread, do everything inside this
-    while self.statusThread() is StatusThread.RUNNING:
+    while self.statusThread() == StatusThread.RUNNING:
+      Watchdog.feed(self.name(), 'run')
 
       # Your code here (remove this pass after)
       pass

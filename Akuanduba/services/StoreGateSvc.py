@@ -5,6 +5,7 @@ from Akuanduba.core import Logger, NotSet, AkuandubaService
 from Akuanduba.core.messenger.macros import *
 from Akuanduba.core.constants import *
 from Akuanduba.core import StatusCode, StatusTool, StatusThread
+from Akuanduba.core.Watchdog import Watchdog
 import datetime
 import time
 import queue
@@ -23,7 +24,7 @@ class StoreGateSvc( AkuandubaService ):
 
   def initialize(self):
     # Initialize thread
-    super(StoreGateSvc, self).initialize()
+    super().initialize()
 
     # Starting the thread.
     if self.start().isFailure():
@@ -39,7 +40,7 @@ class StoreGateSvc( AkuandubaService ):
 
 
   def finalize(self):
-    super(StoreGateSvc,self).finalize()
+    super().finalize()
     MSG_INFO( self, "Number of saved files : %d", self._nsaves )
     return StatusCode.SUCCESS
 
@@ -60,7 +61,8 @@ class StoreGateSvc( AkuandubaService ):
 
 
   def run( self ):
-    while self.statusThread() is StatusThread.RUNNING:
+    while self.statusThread() == StatusThread.RUNNING:
+      Watchdog.feed(self.name(), 'run')
       if self._queue.qsize() > 0:
         MSG_INFO( self,  "Saving..." )
         # get the raw to be saved in json format

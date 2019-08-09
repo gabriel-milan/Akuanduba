@@ -98,7 +98,7 @@ class AkuandubaWatchdog (AkuandubaService):
               # If okay, change it
               params_dict[method][method_param] = custom_params_dict[method][method_param]
             else:
-              MSG_ERROR (self, "Type {} not accepted for param {} on method {}".format(type(custom_params_dict[method][method_param]), method_param, method))
+              MSG_ERROR (self, "Type {} not accepted for param {} on method \"{}\"".format(type(custom_params_dict[method][method_param]), method_param, method))
               return self
         # Checking action
         if ('action' in custom_params_dict[method]):
@@ -107,7 +107,7 @@ class AkuandubaWatchdog (AkuandubaService):
             # If okay, change it
             params_dict[method]['action'] = custom_params_dict[method]['action']
           else:
-            MSG_ERROR (self, "Action \"{}\" not accepted on method {}".format(custom_params_dict[method]['action'], method))
+            MSG_ERROR (self, "Action \"{}\" not accepted on method \"{}\"".format(custom_params_dict[method]['action'], method))
 
     # Reviewing needed keys according to each class
     if (issubclass(type(module), AkuandubaDataframe)):
@@ -145,9 +145,8 @@ class AkuandubaWatchdog (AkuandubaService):
 
   # Feeding this watchdog
   def feed (self, name, method):
-
-    MSG_DEBUG (self, "Feeding the {} WDT...".format(name))
     if name in self._modules.keys():
+      MSG_DEBUG (self, "Feeding the {}'s method \"{}\" WDT...".format(name, method))
       self._modules[name][method]['wdt'] = time()
 
   # Resetting all timers
@@ -184,7 +183,7 @@ class AkuandubaWatchdog (AkuandubaService):
         diff = (time() - self._modules[module][method]['wdt'])
         if (diff > self._modules[module][method]['timeout']):
           action = self._modules[module][method]['action']
-          MSG_WARNING (self, "{} WDT triggered!!! Taking action \"{}\"".format(module, action))
+          MSG_WARNING (self, "{}'s method \"{}\" WDT triggered!!! Taking action \"{}\"".format(module, method, action))
           if (action == 'reset'):
             # Reset module
             # TODO
@@ -193,7 +192,8 @@ class AkuandubaWatchdog (AkuandubaService):
             pass
           elif (action == 'terminate'):
             # Terminate framework
-            # TODO
+            self.terminateFramework()
+            self.finalize()
             # Reset WDT
             self.feed(module, method)
             pass
@@ -201,6 +201,10 @@ class AkuandubaWatchdog (AkuandubaService):
     # Releasing lock
     MSG_DEBUG (self, "Releasing lock after resetting")
     self.__lock.release()
+
+  # Terminate framework
+  def terminateFramework (self):
+    self.getContext().getHandler("EventStatus").forceTerminate()
 
   # Initialize
   def initialize (self):
@@ -222,7 +226,7 @@ class AkuandubaWatchdog (AkuandubaService):
   def enable (self):
     
     # Call super method
-    super(AkuandubaWatchdog, self).enable()
+    super().enable()
 
     # Initializing
     self.initialize()
@@ -236,7 +240,7 @@ class AkuandubaWatchdog (AkuandubaService):
   # Finalize
   def finalize(self):
 
-    super(SampleService,self).finalize()
+    super().finalize()
 
     # Always return SUCCESS
     return StatusCode.SUCCESS
@@ -245,7 +249,7 @@ class AkuandubaWatchdog (AkuandubaService):
   def run( self ):
 
     # Main loop
-    while self.statusThread() is StatusThread.RUNNING:
+    while self.statusThread() == StatusThread.RUNNING:
 
       # Reset timers
       if (self.__resetTimers):

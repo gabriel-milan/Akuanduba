@@ -3,7 +3,7 @@ __all__ = ['Trigger', 'TAccept', 'TriggerCondition', 'AkuandubaTrigger']
 from Akuanduba.core import Logger, EnumStringification, NotSet
 from Akuanduba.core.messenger.macros import *
 from Akuanduba.core import StatusCode, StatusTool, StatusTrigger, AkuandubaTool
-
+from Akuanduba.core.Watchdog import Watchdog
 
 class TAccept(object):
 
@@ -197,6 +197,10 @@ class AkuandubaTrigger ( AkuandubaTool ):
     return StatusCode.SUCCESS
   
   def execute (self, context):
+
+    # Feeding WDTs
+    for tool in [tool for _, tool in self._activities.items()]:
+      Watchdog.feed(tool.name(), 'execute')
 
     # Computes answers from conditions
     answers = []
