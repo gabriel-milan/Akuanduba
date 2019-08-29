@@ -47,6 +47,9 @@ class Context(Logger):
   def releaseAllContainers (self):
     for key in self._lockedContainers:
       self.releaseContainer(key)
+    
+    if (len(self._lockedContainers) != 0):
+      self.releaseAllContainers()
 
   def execute(self):
     for key, edm in self._containers.items():
