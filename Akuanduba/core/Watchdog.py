@@ -7,7 +7,7 @@ from Akuanduba.core.constants import *
 from Akuanduba.core import StatusCode, StatusTool, StatusThread
 from collections import OrderedDict
 from copy import deepcopy
-from threading import Lock
+from threading import Lock, Timer
 from time import time
 
 #
@@ -16,10 +16,19 @@ from time import time
 class AkuandubaWatchdog (AkuandubaService):
 
   # Init
-  def __init__ (self, name = 'AkuandubaWatchdog'):
+  def __init__ (self, name = 'AkuandubaWatchdog', use_linux_watchdog = False):
 
     # Super init
     AkuandubaService.__init__(self, name)
+
+    # Name
+    self._name = name
+
+    # Defaults to always send keep-alive
+    self.__sendKeepAlive = True
+    
+    # Stores information about using Linux wdt or not
+    self._useLinuxWatchdog = use_linux_watchdog
 
     # Messaging
     MSG_INFO(self, "Creating the AkuandubaWatchdog...")
@@ -147,7 +156,9 @@ class AkuandubaWatchdog (AkuandubaService):
   def feed (self, name, method):
     if name in self._modules.keys():
       MSG_DEBUG (self, "Feeding the {}'s method \"{}\" WDT...".format(name, method))
-      self._modules[name][method]['wdt'] = time()
+      self._modules[name][method]['wdt'].cancel()
+      self._modules[name][method]['wdt'] = Timer(self._modules[name][method]['timeout'], self.__handler, [name, method])
+      self._modules[name][method]['wdt'].start()
 
   # Resetting all timers
   def resetTimers (self):
@@ -160,7 +171,12 @@ class AkuandubaWatchdog (AkuandubaService):
     MSG_INFO (self, "Resetting all watchdog timers")
     for key in self._modules.keys():
       for method in self._modules[key].keys():
-        self._modules[key][method]['wdt'] = time()
+        try:
+          self._modules[key][method]['wdt'].cancel
+        except KeyError:
+          pass
+        self._modules[key][method]['wdt'] = Timer(self._modules[key][method]['timeout'], self.__handler, [key, method])
+        self._modules[key][method]['wdt'].start()
 
     # Releasing lock
     MSG_DEBUG (self, "Releasing lock after resetting")
@@ -169,38 +185,69 @@ class AkuandubaWatchdog (AkuandubaService):
     # Resetting flag
     self.__resetTimers = False
 
-  # Checking timers
-  def checkWDT (self):
+  # Force this module to keep sending keep-alives
+  def forceKeepAliveFlag (self, module):
+
+    MSG_WARNING (self, "Module {} forced this Watchdog to keep sending keep-alives".format(module.name()))
+    self.__sendKeepAlive = True
+
+  # Method that writes into wdt file
+  def __wdt_write (self, value, count=0):
+    import os
+    from time import sleep
+
+    if (count > 0):
+      MSG_WARNING (self, "This is the retry attempt #{} to write on the WDT file".format(count + 1))
+
+    # Break condition
+    if (count >= WDT_WRITE_ATTEMPTS):
+      MSG_ERROR (self, "Tried to write into the WDT file too many times. Rebooting system in {} seconds...".format(WDT_WRITE_FAIL_REBOOT_TIMEOUT))
+      sleep(WDT_WRITE_FAIL_REBOOT_TIMEOUT)
+      os.system("reboot")
+
+    # Default operation
+    try:
+      fd = os.open(WDT_FILENAME, os.O_WRONLY|os.O_NOCTTY)
+      f = open(fd, WDT_FILE_OPTIONS, buffering = 0)
+      f.write(value)
+      f.close()
+    except OSError:
+      MSG_WARNING (self, "WDT file could not be opened, will retry in 1 second (count = {})".format(count))
+      sleep(1)
+      self.__wdt_write(value, count + 1)
+
+  # Method that keeps Linux alive by writing into file /dev/watchdog
+  def __wdt_keepalive (self):
+    self.__wdt_write(b".")
+
+  # Method that disables Linux wdt
+  def __wdt_stop (self):
+    self.__wdt_write(b"V")
+
+  # Finalizing all timers
+  def finalizeTimers (self):
 
     # Acquiring lock
-    MSG_DEBUG (self, "Acquiring lock for checking WDT")
+    MSG_DEBUG (self, "Acquiring lock for finalizing")
     self.__lock.acquire()
 
-    # Checking
-    MSG_DEBUG (self, "Checking all watchdog timers")
-    for module in self._modules.keys():
-      for method in self._modules[module].keys():
-        diff = (time() - self._modules[module][method]['wdt'])
-        if (diff > self._modules[module][method]['timeout']):
-          action = self._modules[module][method]['action']
-          MSG_WARNING (self, "{}'s method \"{}\" WDT triggered!!! Taking action \"{}\"".format(module, method, action))
-          if (action == 'reset'):
-            # Reset module
-            # TODO
-            # Reset WDT
-            self.feed(module, method)
-            pass
-          elif (action == 'terminate'):
-            # Terminate framework
-            self.terminateFramework()
-            self.finalize()
-            # Reset WDT
-            self.feed(module, method)
-            pass
+    # Resetting
+    MSG_INFO (self, "Finalizing all watchdog timers")
+    for key in self._modules.keys():
+      for method in self._modules[key].keys():
+        try:
+          self._modules[key][method]['wdt'].cancel
+        except KeyError:
+          pass
 
     # Releasing lock
-    MSG_DEBUG (self, "Releasing lock after resetting")
+    MSG_DEBUG (self, "Releasing lock after finalizing")
     self.__lock.release()
+
+  # Handler for this implementation
+  def __handler (self, name, method):
+    MSG_WARNING(self, "{}'s method {} triggered the watchdog!!! This will shutdown soon...".format(name, method))
+    self.__sendKeepAlive = False
 
   # Terminate framework
   def terminateFramework (self):
@@ -211,11 +258,11 @@ class AkuandubaWatchdog (AkuandubaService):
 
     # Initialize thread, as every service runs as a thread
     if self.isSafeThread():
-      MSG_INFO( self, "Initializing safe thread for %s", self.name())
+      MSG_INFO( self, "Initializing safe thread for %s", self._name)
       self.forceRunThread()
 
     if self.start().isFailure():
-      MSG_FATAL( self, "Impossible to initialize the %s service", self.name())
+      MSG_FATAL( self, "Impossible to initialize the %s service", self._name)
       return StatusCode.FAILURE
 
     # Lock the initialization. After that, this tool can not be initialized once again
@@ -247,16 +294,25 @@ class AkuandubaWatchdog (AkuandubaService):
 
   # Run
   def run( self ):
+    from time import sleep
 
     # Main loop
     while self.statusThread() == StatusThread.RUNNING:
 
-      # Reset timers
-      if (self.__resetTimers):
-        self.resetTimers()
+      # This assures that when a module forces the Watchdog to send keep-alives again, it works
+      if (self._useLinuxWatchdog):
+        while self.__sendKeepAlive:
+          # Reset timers
+          if (self.__resetTimers):
+            self.resetTimers()
 
-      # Checking WDTs
-      self.checkWDT()
+          # Keeps RPi alive
+          self.__wdt_keepalive()
 
+        MSG_WARNING (self, "Watchdog stopped sending keep-alives...")
+        sleep(1)
+
+      # NOP
+      pass
 
 Watchdog = AkuandubaWatchdog("AkuandubaWatchdog")

@@ -13,6 +13,10 @@ MAX_FIFO = 100000
 relative_save_dir = 'saves/'
 
 # Watchdog constants
-DEFAULT_METHOD_ENABLE   = True
-DEFAULT_METHOD_TIMEOUT  = 10 * Second
-DEFAULT_METHOD_ACTION   = 'reset'
+DEFAULT_METHOD_ENABLE           = True
+DEFAULT_METHOD_TIMEOUT          = 10 * Second
+DEFAULT_METHOD_ACTION           = 'reset'
+WDT_WRITE_ATTEMPTS              = 5
+WDT_FILENAME                    = '/dev/watchdog'
+WDT_FILE_OPTIONS                = 'wb+'
+WDT_WRITE_FAIL_REBOOT_TIMEOUT   = 5
