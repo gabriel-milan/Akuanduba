@@ -13,7 +13,6 @@ class Manager ( Logger ):
     self._name = name
     if (mgrType not in ['Dataframe', 'Tool', 'Service']) or (mgrType == NotSet):
       MSG_ERROR(self, "Couldn't create Manager with type {}".format(mgrType))
-      return StatusCode.FAILURE
     self._mgrType = mgrType
     self._collection = collections.OrderedDict()
     MSG_INFO( self, "Creating {} as a {} manager...".format(name, mgrType))
@@ -28,16 +27,16 @@ class Manager ( Logger ):
     self._collection[ tool.name() ] =  tool
 
   def __iter__(self):
-    for name, tool in self._collection.iteritems():
+    for _, tool in self._collection.items():
       yield tool
 
   def disable(self):
-    for name, tool in self._collection.iteritems():
+    for name, tool in self._collection.items():
       MSG_DEBUG(self, "Disable {} {}".format(name, self._mgrType))
       tool.disable()
 
   def enable(self):
-    for name, tool in self._collection.iteritems():
+    for name, tool in self._collection.items():
       MSG_DEBUG(self, "Enable {} {}".format(name, self._mgrType))
       tool.enable()
 
@@ -72,7 +71,7 @@ class Manager ( Logger ):
 
   def resume(self):
     MSG_INFO( self, "{}: {}".format(self._mgrType, self.name()))
-    for name, tool in self._collection.items():
+    for _, tool in self._collection.items():
       MSG_INFO( self, " * {} as {}".format(tool.name(), self._mgrType))
 
   def getTools(self):

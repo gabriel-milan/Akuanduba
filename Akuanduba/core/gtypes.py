@@ -26,7 +26,7 @@ class EnumStringification( object ):
   @classmethod
   def tostring(cls, val):
     "Transforms val into string."
-    from Akuanduba.utilities  import get_attributes
+    from Akuanduba.core.utilities  import get_attributes
     for k, v in get_attributes(cls, getProtected = False):
       if v==val:
         return k
@@ -35,7 +35,7 @@ class EnumStringification( object ):
   @classmethod
   def fromstring(cls, str_):
     "Transforms string into enumeration."
-    from Akuanduba.utilities  import get_attributes
+    from Akuanduba.core.utilities  import get_attributes
     if not cls._ignoreCase:
       return getattr(cls, str_, None)
     else:
@@ -52,7 +52,7 @@ class EnumStringification( object ):
     Retrieve int value and check if it is a valid enumeration string or int on
     this enumeration class.
     """
-    from Akuanduba.utilities import get_attributes
+    from Akuanduba.core.utilities import get_attributes
     allowedValues = [attr for attr in get_attributes(cls) if not attr[0].startswith('_')]
     try:
       # Convert integer string values to integer, if possible:
@@ -80,17 +80,17 @@ class EnumStringification( object ):
   @classmethod
   def optionList(cls):
     from operator import itemgetter
-    from Akuanduba.utilities import get_attributes
+    from Akuanduba.core.utilities import get_attributes
     return [v for v in sorted(get_attributes( cls, getProtected = False), key=itemgetter(1))]
 
   @classmethod
   def stringList(cls):
     from operator import itemgetter
-    from Akuanduba.utilities import get_attributes
+    from Akuanduba.core.utilities import get_attributes
     return [v[0] for v in sorted(get_attributes( cls, getProtected = False), key=itemgetter(1))]
 
   @classmethod
   def intList(cls):
     from operator import itemgetter
-    from Akuanduba.utilities import get_attributes
+    from Akuanduba.core.utilities import get_attributes
     return [v[1] for v in sorted(get_attributes( cls, getProtected = False), key=itemgetter(1))]

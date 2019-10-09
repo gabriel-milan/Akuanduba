@@ -73,12 +73,12 @@ class Trigger( AkuandubaTool ):
     accept = TAccept()
 
     # Tools
-    for key, hypo in self._hypos.items():
+    for _, hypo in self._hypos.items():
 
       MSG_DEBUG( self, "Execute hypo %s", hypo.name())
 
       if( hypo.execute_r( self.getContext(), accept ).isFailure() ):
-        MSG_WARNING( self, "Impossible to execute %s.", tool.name())
+        MSG_WARNING( self, "Impossible to execute %s.", hypo.name())
 
 
     if not accept.passedOR():
@@ -94,7 +94,7 @@ class Trigger( AkuandubaTool ):
 
   def finalize(self):
     # Services
-    for key, hypo in self._hypos.items():
+    for _, hypo in self._hypos.items():
       if( hypo.finalize().isFailure() ):
         MSG_WARNING( self, "Impossible to execute %s.", hypo.name())
         return StatusCode.FAILURE
@@ -182,14 +182,18 @@ class AkuandubaTrigger ( AkuandubaTool ):
       self.getContext().setHandler( tool.name() , tool )
       tool.setContext( self.getContext() )
       tool.level = self._level
-      if not (tool.initialize() is StatusCode.SUCCESS):
+      if (tool.initialize().isFailure()):
         MSG_FATAL(self, "Couldn't initialize TriggerActivity %s.", tool.name())
 
     # Initializing all conditions
     for condition in [condition for _, condition in self._conditions.items()]:
       try:
         MSG_INFO (self, 'Initializing TriggerCondition with name %s', condition.name())
-        if not (condition.initialize() is StatusCode.SUCCESS):
+        try:
+          condition.setContext (self.getContext())
+        except AttributeError:
+          MSG_WARNING(self, "Condition with name {} does not implement the method \"setContext\", we are now moving on.".format(condition.name()))
+        if (condition.initialize().isFailure()):
           MSG_FATAL (self, "Initialization of TriggerCondition %s didn't return SUCCESS", condition.name())
       except:
         MSG_FATAL (self, "Couldn't initialize TriggerCondition %s", condition.name())

@@ -1,6 +1,7 @@
 __all__ = ["DataLog"]
 
 from Akuanduba.core import AkuandubaTool, StatusCode, NotSet, retrieve_kw
+from Akuanduba.core.messenger.macros import *
 
 class DataLog(AkuandubaTool):
 

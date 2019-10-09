@@ -16,14 +16,14 @@ class StatusObj(object):
     else:
       return False
 
-  def __eq__(self, a, b):
-    if a.status == b.status:
+  def __eq__(self, a):
+    if self.status == a.status:
       return True
     else:
       return False
 
-  def __ne__(self, a, b):
-    if a.status != b.status:
+  def __ne__(self, a):
+    if self.status != a.status:
       return True
     else:
       return False
