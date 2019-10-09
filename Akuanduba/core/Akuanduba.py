@@ -12,12 +12,13 @@ from time import time
 class Akuanduba( Logger ):
 
 
-  def __init__(self, name, level = LoggingLevel.INFO):
+  def __init__(self, name, level = LoggingLevel.INFO, use_linux_watchdog = False):
     Logger.__init__(self, level = level)
     import collections
     self._containers = {}
     self._context = NotSet
     self._name = name
+    self._useLinuxWatchdog = use_linux_watchdog
 
 
   def initialize( self ):
@@ -31,6 +32,8 @@ class Akuanduba( Logger ):
 
     # Sets watchdog's context
     Watchdog.setContext(self.getContext())
+    if (self._useLinuxWatchdog):
+      Watchdog.enableLinuxWatchdog()
 
     # Create here all dataframes the core needs
     from Akuanduba.core import EventStatus

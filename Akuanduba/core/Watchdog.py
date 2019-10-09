@@ -191,6 +191,10 @@ class AkuandubaWatchdog (AkuandubaService):
     MSG_WARNING (self, "Module {} forced this Watchdog to keep sending keep-alives".format(module.name()))
     self.__sendKeepAlive = True
 
+  # Enables Linux watchdog
+  def enableLinuxWatchdog (self):
+    self._useLinuxWatchdog = True
+
   # Method that writes into wdt file
   def __wdt_write (self, value, count=0):
     import os
