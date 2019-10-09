@@ -117,4 +117,4 @@ As you may see, the *run* method of the *services* acquire data in real time (âˆ
 
 # To-Do! (next releases)
 
-* Remove deprecated implementation of triggers.
+* ???
