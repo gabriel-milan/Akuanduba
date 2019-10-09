@@ -115,6 +115,16 @@ Let's say you have two *services* that acquire data from different sources and o
 
 As you may see, the *run* method of the *services* acquire data in real time (∞) and append it to its own queue. On the main Akuanduba loop, the *execute* methods are called and the data is stored on the *data frames* (1 and 2). After that, the *tools* *execute* method will be called, where the data will be processed and stored on another *data frame* (3).
 
+# Changelog
+
+* v0.1.1 - Initial release
+* v0.1.2 - Improved the Logger module
+* v0.1.3 - Implements Locks for AkuandubaDataframes handling
+* v0.1.4 - Adds new implementation of triggers, now allowing AND, OR or XOR with TriggerConditions
+* v0.1.5 - Implements automatic lock releasing for AkuandubaDataframes
+* v0.1.6 - Fixes v0.1.5 bugs with lock releasing
+* v0.2.0 - Implements Linux Watchdog integration, fix minor linter complainings, removes legacy implementation of trigger, changes timer implementation and implements NTP synchronization
+
 # To-Do! (next releases)
 
 * ???

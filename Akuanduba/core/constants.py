@@ -20,3 +20,7 @@ WDT_WRITE_ATTEMPTS              = 5
 WDT_FILENAME                    = '/dev/watchdog'
 WDT_FILE_OPTIONS                = 'wb+'
 WDT_WRITE_FAIL_REBOOT_TIMEOUT   = 5
+
+# NTPSyncService constants
+REF_TIME_1970                   = 2208988800
+DEFAULT_UPDATE_DELAY            = 1 * Hour
