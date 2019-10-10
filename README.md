@@ -124,6 +124,7 @@ As you may see, the *run* method of the *services* acquire data in real time (âˆ
 * v0.1.5 - Implements automatic lock releasing for AkuandubaDataframes
 * v0.1.6 - Fixes v0.1.5 bugs with lock releasing
 * v0.2.0 - Implements Linux Watchdog integration, fix minor linter complainings, removes legacy implementation of trigger, changes timer implementation and implements NTP synchronization
+* v0.2.1 - Fixes minor KeyError on Watchdog implementation
 
 # To-Do! (next releases)
 

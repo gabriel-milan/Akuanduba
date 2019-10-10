@@ -156,7 +156,10 @@ class AkuandubaWatchdog (AkuandubaService):
   def feed (self, name, method):
     if name in self._modules.keys():
       MSG_DEBUG (self, "Feeding the {}'s method \"{}\" WDT...".format(name, method))
-      self._modules[name][method]['wdt'].cancel()
+      try:
+        self._modules[name][method]['wdt'].cancel()
+      except KeyError:
+        pass
       self._modules[name][method]['wdt'] = Timer(self._modules[name][method]['timeout'], self.__handler, [name, method])
       self._modules[name][method]['wdt'].start()
 
